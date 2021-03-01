@@ -32,11 +32,8 @@ prepare() {
     sed "s/DBEAVER_VERSION/${pkgver}/g" |
     gzip -9 > "${pkgname}.profile-${pkgver}.gz"
   # Avoid the use of any Java 15, actually incompatible with the build
-  #for _java_version in $(archlinux-java status | tail -n +2 | cut -d' ' -f 3 | grep -v 'java-15')
-  #do
-  #  export JAVA_HOME="/usr/lib/jvm/${_java_version}"
-  #done
-  export JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
+  java_version=$(archlinux-java status | tail -n +2 | cut -d' ' -f 3 | sort -n -t '-' -k2 | egrep '^java-[11-14]{2}' | tail -n 1)
+  export JAVA_HOME="/usr/lib/jvm/${_java_version}"
   # Download dependencies during prepare FS#55873
   # https://bugs.archlinux.org/task/55873
   cd "${pkgname}-${pkgver}"
